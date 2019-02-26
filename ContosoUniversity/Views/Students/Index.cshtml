@@ -2,7 +2,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
-@model IEnumerable<ContosoUniversity.Models.Student>
+@model PaginatedList<ContosoUniversity.Models.Student>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,12 +13,23 @@
 
 <p><a asp-action="Create">Create New</a></p>
 
+<form asp-action="Index" method="get">
+
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["currentFilter"]"/>
+            <input type="submit" value="Search" class="btn btn-default"/> | <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+
+</form>
+
 <table class="table">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.LastName)</th>
-            <th>@Html.DisplayNameFor(model => model.FirstMidName)</th>
-            <th>@Html.DisplayNameFor(model => model.EnrollmentDate)</th>
+            <th><a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Last Name</a></th>
+            <th>First Name</th>
+            <th><a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Enrollmen Date</a></th>
             <th></th>
         </tr>
     </thead>
@@ -40,3 +51,25 @@
 
     </tbody>           
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a  asp-action="Index"
+    asp-route-sortOrder="@ViewData["CurrentSort"]"
+    asp-route-page="@(Model.PageIndex - 1)"
+    asp-route-currentFilter="@ViewData["CurrentFilter"]"
+    class="btn btn-default @prevDisabled">   
+     Previous
+</a>
+
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-page="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
